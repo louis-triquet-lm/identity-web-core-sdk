@@ -70,3 +70,22 @@ export function rawRequest<Data>(url: string, fetchOptions?: RequestInit) {
     return (undefined as any) as Data
   })
 }
+
+export type HttpPostParams = {
+  [key: string]: any
+}
+
+export const httpPost = (url: string, params: HttpPostParams): void => {
+  const myForm = document.createElement('form')
+  myForm.method = 'post'
+  myForm.action = url
+  Object.keys(params).forEach(key => {
+    const myInput = document.createElement('input')
+    myInput.setAttribute('name', key)
+    myInput.setAttribute('value', params[key])
+    myForm.appendChild(myInput)
+  })
+  document.body.appendChild(myForm)
+  myForm.submit()
+  document.body.removeChild(myForm)
+}

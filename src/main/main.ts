@@ -32,6 +32,8 @@ export type Client = {
   off: <K extends keyof Events>(eventName: K, listener: (payload: Events[K]) => void) => void
   signup: (params: SignupParams) => Promise<void>
   loginWithPassword: (params: LoginWithPasswordParams) => Promise<void>
+  loginWithExternalUI: (loginUrl: string, redirecturl: string) => void
+  loginWithExternalUICallback: (tkn: string, auth: AuthOptions) => void
   startPasswordless: (params: PasswordlessParams, options?: AuthOptions) => Promise<void>
   verifyPasswordless: (params: PasswordlessParams) => Promise<void>
   loginWithSocialProvider: (provider: string, options?: AuthOptions) => Promise<void>
@@ -92,6 +94,14 @@ export function createClient(creationConfig: Config): Client {
 
   function loginWithPassword(params: LoginWithPasswordParams) {
     return apiClient.then(api => api.loginWithPassword(params))
+  }
+
+  function loginWithExternalUI(loginUrl: string, redirectUrl: string) {
+    return apiClient.then(api => api.loginWithExternalUI(loginUrl, redirectUrl))
+  }
+
+  function loginWithExternalUICallback(tkn: string, auth: AuthOptions = {}) {
+    return apiClient.then(api => api.loginWithExternalUICallback(tkn, auth))
   }
 
   function startPasswordless(params: PasswordlessParams, options: AuthOptions = {}) {
@@ -198,6 +208,8 @@ export function createClient(creationConfig: Config): Client {
     off,
     signup,
     loginWithPassword,
+    loginWithExternalUI,
+    loginWithExternalUICallback,
     startPasswordless,
     verifyPasswordless,
     loginWithSocialProvider,

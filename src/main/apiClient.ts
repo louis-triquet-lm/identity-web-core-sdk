@@ -12,7 +12,7 @@ import { AuthResult, enrichAuthResult } from './authResult'
 import { IdentityEventManager } from './identityEventManager'
 import { UrlParser } from './urlParser'
 import { popupSize } from './providerPopupSize'
-import { createHttpClient, HttpClient } from './httpClient'
+import { createHttpClient, HttpClient, httpPost } from './httpClient'
 import { computePkceParams, PkceParams } from './pkceService'
 
 export type SignupParams = { data: SignupProfile; saveCredentials?: boolean; auth?: AuthOptions; redirectUrl?: string }
@@ -314,6 +314,23 @@ export default class ApiClient {
         this.eventManager.fireEvent('login_failed', err)
       }
       throw err
+    })
+  }
+
+  loginWithExternalUI(loginUrl: string, redirectUrl: string): void {
+    httpPost(loginUrl, { clientId: this.config.clientId, scope: this.resolveScope({}), redirectUrl })
+  }
+
+  loginWithExternalUICallback(tkn: string, auth: AuthOptions = {}): void {
+    const authParams = this.authParams(auth)
+
+    this.getPkceParams(authParams).then(maybeChallenge => {
+      const queryString = toQueryString({
+        ...authParams,
+        tkn,
+        ...maybeChallenge
+      })
+      window.location.assign(`${this.baseUrl}/password/callback?${queryString}`)
     })
   }
 
