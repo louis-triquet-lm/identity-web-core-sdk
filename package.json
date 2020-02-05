@@ -1,13 +1,13 @@
 {
-  "name": "@reachfive/identity-core",
-  "version": "1.9.3",
-  "description": "Reach5 Identity Web Core SDK",
+  "name": "louistriquet-identity-core",
+  "version": "0.0.2",
+  "description": "Test",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ReachFive/identity-web-core-sdk"
+    "url": "https://github.com/louis-triquet-lm/identity-web-core-sdk"
   },
-  "author": "ReachFive",
+  "author": "Louis Triquet",
   "main": "cjs/main.js",
   "module": "es/main.js",
   "types": "es/main/main.d.ts",

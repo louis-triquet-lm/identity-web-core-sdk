@@ -318,6 +318,7 @@ export default class ApiClient {
   }
 
   loginWithExternalUI(loginUrl: string, redirectUrl: string): void {
+      console.log("sdk login with external UI", this.config.clientId, this.resolveScope({}), redirectUrl)
     httpPost(loginUrl, { clientId: this.config.clientId, scope: this.resolveScope({}), redirectUrl })
   }
 
