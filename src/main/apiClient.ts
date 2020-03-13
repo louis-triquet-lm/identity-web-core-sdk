@@ -12,7 +12,7 @@ import { AuthResult, enrichAuthResult } from './authResult'
 import { IdentityEventManager } from './identityEventManager'
 import { UrlParser } from './urlParser'
 import { popupSize } from './providerPopupSize'
-import { createHttpClient, HttpClient, httpPost } from './httpClient'
+import { createHttpClient, HttpClient } from './httpClient'
 import { computePkceParams, PkceParams } from './pkceService'
 
 export type SignupParams = { data: SignupProfile; saveCredentials?: boolean; auth?: AuthOptions; redirectUrl?: string }
@@ -71,6 +71,7 @@ export type ApiClientConfig = {
 }
 
 export type TokenRequestParameters = {
+  tokenUrl?: string
   code: string
   redirectUri: string
 }
@@ -124,16 +125,21 @@ export default class ApiClient {
     })
   }
 
-  exchangeAuthorizationCodeWithPkce(params: TokenRequestParameters): Promise<void> {
+  exchangeAuthorizationCode(params: TokenRequestParameters): Promise<void> {
+    const url = params.tokenUrl || this.tokenUrl
+
+    const body = {
+      clientId: this.config.clientId,
+      grantType: 'authorization_code',
+      code: params.code,
+      redirectUri: params.redirectUri,
+      code_verifier: sessionStorage.getItem('verifier_key'),
+      oauthTokenUrl: params.tokenUrl ? this.tokenUrl : undefined
+    }
+
     return this.http
-      .post<AuthResult>(this.tokenUrl, {
-        body: {
-          clientId: this.config.clientId,
-          grantType: 'authorization_code',
-          code: params.code,
-          redirectUri: params.redirectUri,
-          code_verifier: sessionStorage.getItem('verifier_key')
-        }
+      .post<AuthResult>(url, {
+        body
       })
       .then(result => this.eventManager.fireEvent('authenticated', result))
   }
@@ -318,8 +324,10 @@ export default class ApiClient {
   }
 
   loginWithExternalUI(loginUrl: string, redirectUrl: string): void {
-      console.log("sdk login with external UI", this.config.clientId, this.resolveScope({}), redirectUrl)
-    httpPost(loginUrl, { clientId: this.config.clientId, scope: this.resolveScope({}), redirectUrl })
+    const queryString = toQueryString({ clientId: this.config.clientId, scope: this.resolveScope({}), redirectUrl })
+    window.location.assign(`${loginUrl}?${queryString}`)
+
+    //httpPost(loginUrl, { clientId: this.config.clientId, scope: this.resolveScope({}), redirectUrl })
   }
 
   loginWithExternalUICallback(tkn: string, auth: AuthOptions = {}): void {

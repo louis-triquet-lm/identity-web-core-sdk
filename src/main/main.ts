@@ -37,7 +37,7 @@ export type Client = {
   startPasswordless: (params: PasswordlessParams, options?: AuthOptions) => Promise<void>
   verifyPasswordless: (params: PasswordlessParams) => Promise<void>
   loginWithSocialProvider: (provider: string, options?: AuthOptions) => Promise<void>
-  exchangeAuthorizationCodeWithPkce: (params: TokenRequestParameters) => Promise<void>
+  exchangeAuthorizationCode: (params: TokenRequestParameters) => Promise<void>
   requestPasswordReset: (params: RequestPasswordResetParams) => Promise<void>
   unlink: (params: { accessToken: string; identityId: string; fields?: string }) => Promise<void>
   refreshTokens: (params: { accessToken: string }) => Promise<AuthResult>
@@ -116,8 +116,8 @@ export function createClient(creationConfig: Config): Client {
     return apiClient.then(api => api.loginWithSocialProvider(provider, options))
   }
 
-  function exchangeAuthorizationCodeWithPkce(params: TokenRequestParameters) {
-    return apiClient.then(api => api.exchangeAuthorizationCodeWithPkce(params))
+  function exchangeAuthorizationCode(params: TokenRequestParameters) {
+    return apiClient.then(api => api.exchangeAuthorizationCode(params))
   }
 
   function requestPasswordReset(params: RequestPasswordResetParams) {
@@ -213,7 +213,7 @@ export function createClient(creationConfig: Config): Client {
     startPasswordless,
     verifyPasswordless,
     loginWithSocialProvider,
-    exchangeAuthorizationCodeWithPkce,
+    exchangeAuthorizationCode,
     requestPasswordReset,
     unlink,
     refreshTokens,
